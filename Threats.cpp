@@ -1,28 +1,31 @@
 #include <iostream>
-#include <cstdlib>
-#include <pthread.h>
-#include <unistd.h>
-#include <stdlib.h>
+#include <thread>
 #include <stdio.h>
+#include <stdlib.h>
+#include <vector>
+#include <algorithm>
 
-using namespace std;
+int main()
+{
+    // vector container stores threads
+    std::vector<std::thread> workers;
+    for (int i = 0; i < 5; i++) {
+        workers.push_back(std::thread([]() 
+        {
+            std::cout << "thread function\n";
+        }));
+    }
+    std::cout << "main thread\n";
 
-#define NUM_THREADS 5
+    // Looping every thread via for_each
+    // The 3rd argument assigns a task
+    // It tells the compiler we're using lambda ([])
+    // The lambda function takes its argument as a reference to a thread, t
+    // Then, joins one by one, and this works like barrier
+    std::for_each(workers.begin(), workers.end(), [](std::thread &t;) 
+    {
+        t.join();
+    });
 
-void *PrintHello(void *threadid) {
-	long tid;
-	tid = (long)threadid;
-	printf("Hello World! Thread ID, %d",tid);
-	pthread_exit(NULL);}
-
-int main () {
-	pthread_t threads[NUM_THREADS];
-	int rc;
-	int i;
-	for( i = 0; i < NUM_THREADS; i++ ) {
-		printf("main() : creating thread, %d",i);
-		rc = pthread_create(&threads[i], NULL, PrintHello, (void *)(long)i);
-		if (rc) {
-			printf("Error:unable to create thread, %d",rc);
-			exit(-1);}}
-	pthread_exit(NULL);}
+    return 0;
+}

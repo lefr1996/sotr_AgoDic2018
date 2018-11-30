@@ -1,0 +1,63 @@
+BACI System: C-- to PCODE Compiler, 12:29  18 Jul 2004
+Source file: Peterson_01.cm  Wed Nov 21 13:41:08 2018
+ line  pc
+   1    0  /*
+   2    0   * Algoritmo de Peterson
+   3    0   */
+   4    0  int FALSE=0;
+   5    0  int TRUE=1;
+   6    0  const int N=2;	/* Numero de procesos */
+   7    0  int G=0;	/* Recurso compartido */
+   8    0  
+   9    0  int turn;		/* ¿A quien le toca?*/
+  10    0  int interested[N];	/* Todos los valores son inicialmente 0 (FALSE) */
+  11    0  
+  12    0  void enter_region(int process)	/* process 0 o 1 */
+  13    0  {
+  14    0    int other;		/* Numero del otro proceso */
+  15    0    other=1-process;	/* Lo opuesto de process */
+  16    5    interested[process]=TRUE;	/* mostrar interes */
+  17   10    turn=process;		/*establecer bandera*/
+  18   13    while((turn==process)&&(interested[other]==TRUE))/* instruccion nula */;
+  19   25  }
+  20   26  
+  21   26  void leave_region(int process)	/* process: quien sale */
+  22   26  {
+  23   26    interested[process]=FALSE;
+  24   31  }
+  25   32  
+  26   32  /* process 0 */
+  27   32  void p()
+  28   32  {
+  29   32    int i=0;
+  30   35    while(i<10){
+  31   39      i++;
+  32   44      cout<<"p seccion no critica"<<endl;
+  33   46      enter_region(0);
+  34   50      cout<<"p seccion critica"<<endl;
+  35   52      G=G+1;
+  36   57      leave_region(0);
+  37   61    }
+  38   62  }
+  39   63  
+  40   63  /* process 1 */
+  41   63  void q()
+  42   63  {
+  43   63    int i=0;
+  44   66    while(i<10){
+  45   70      i++;
+  46   75      cout<<"q seccion no critica"<<endl;
+  47   77      enter_region(1);
+  48   81      cout<<"q seccion critica"<<endl;
+  49   83      G=G+1;
+  50   88      leave_region(1);
+  51   92    }
+  52   93  }
+  53   94  
+  54   94  main() {
+  55   95    cobegin {
+  56   96      p();
+  57   99      q();
+  58  102    }
+  59  103    cout<<"G="<<G<<endl;
+  60  107  }/* end main() */

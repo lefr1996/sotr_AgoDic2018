@@ -1,0 +1,55 @@
+BACI System: C-- to PCODE Compiler, 12:29  18 Jul 2004
+Source file: Peterson.cm  Wed Nov 21 13:20:46 2018
+ line  pc
+   1    0  /*
+   2    0   * Algoritmo de Peterson
+   3    0   */
+   4    0  int FALSE=0;
+   5    0  int TRUE=1;
+   6    0  const int N=2;	/* Numero de procesos */
+   7    0  
+   8    0  int turn;		/* ¿A quien le toca?*/
+   9    0  int interested[N];	/* Todos los valores son inicialmente 0 (FALSE) */
+  10    0  
+  11    0  void enter_region(int process)	/* process 0 o 1 */
+  12    0  {
+  13    0    int other;		/* Numero del otro proceso */
+  14    0    other=1-process;	/* Lo opuesto de process */
+  15    5    interested[process]=TRUE;	/* mostrar interes */
+  16   10    turn=process;		/*establecer bandera*/
+  17   13    while((turn==process)&&(interested[other]==TRUE))/* instruccion nula */;
+  18   25  }
+  19   26  
+  20   26  void leave_region(int process)	/* process: quien sale */
+  21   26  {
+  22   26    interested[process]=FALSE;
+  23   31  }
+  24   32  
+  25   32  /* process 0 */
+  26   32  void p()
+  27   32  {
+  28   32    while(1){
+  29   34      cout<<"p seccion no critica"<<endl;
+  30   36      enter_region(0);
+  31   40      cout<<"p seccion critica"<<endl;
+  32   42      leave_region(0);
+  33   46    }
+  34   47  }
+  35   48  
+  36   48  /* process 1 */
+  37   48  void q()
+  38   48  {
+  39   48    while(1){
+  40   50      cout<<"q seccion no critica"<<endl;
+  41   52      enter_region(1);
+  42   56      cout<<"q seccion critica"<<endl;
+  43   58      leave_region(1);
+  44   62    }
+  45   63  }
+  46   64  
+  47   64  main() {
+  48   65    cobegin {
+  49   66      p();
+  50   69      q();
+  51   72    }
+  52   73  }/* end main() */
